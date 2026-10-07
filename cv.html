@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 2: Trang CV bằng React</title>
+    <!-- Thư viện React, ReactDOM và Babel để chạy trực tiếp trên trình duyệt -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        header {
+            background-color: #e0e0e0;
+            padding: 15px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .section-box {
+            margin-top: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .section-title {
+            color: #d32f2f; /* Màu đỏ PTIT */
+            border-bottom: 2px solid #d32f2f;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        .btn-doi-mau {
+            padding: 8px 15px;
+            cursor: pointer;
+            margin-top: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        function Header(props) {
+            const gio = new Date().getHours();
+            let loiChao = "Chào bạn!";
+            if (gio < 12) loiChao = "Chào buổi sáng!";
+            else if (gio < 18) loiChao = "Chào buổi chiều!";
+            else loiChao = "Chào buổi tối!";
+
+            return (
+                <header>
+                    <h1>{props.hoTen}</h1>
+                    <p><em>{loiChao}</em></p>
+                </header>
+            );
+        }
+
+        function Section(props) {
+            return (
+                <section className="section-box">
+                    <h3 className="section-title">{props.title}</h3>
+                    {/* props.children đại diện cho toàn bộ nội dung nằm giữa thẻ đóng/mở <Section> */}
+                    <div>{props.children}</div>
+                </section>
+            );
+        }
+
+        function SkillList(props) {
+            return (
+                <ul>
+                    {props.skills.map(function(item, index) {
+                        return <li key={index}>{item}</li>;
+                    })}
+                </ul>
+            );
+        }
+
+    
+        function ProjectList(props) {
+            return (
+                <ul>
+                    {props.projects.map(function(item, index) {
+                        return (
+                            <li key={index}>
+                                <strong>{item.tenDuAn}</strong>: {item.moTa}
+                            </li>
+                        );
+                    })}
+                </ul>
+            );
+        }
+
+    
+        function App() {
+       
+            const [mauNen, setMauNen] = React.useState("white");
+
+    
+            function handleDoiMau() {
+                if (mauNen === "lightblue") {
+                    setMauNen("lightyellow");
+                } else {
+                    setMauNen("lightblue");
+                }
+            }
+
+            const danhSachKyNang = [
+                "Lập trình: HTML, CSS, JavaScript, C/C++, Python",
+                "Hiểu biết cơ bản về AIoT và phát triển phần mềm",
+                "Kỹ năng sử dụng Git và GitHub cơ bản"
+            ];
+
+   
+            const danhSachDuAn = [
+                {
+                    tenDuAn: "Trang CV cá nhân",
+                    moTa: "Xây dựng giao diện giới thiệu bản thân bằng HTML, CSS, JavaScript"
+                },
+                {
+                    tenDuAn: "Virtual Calculator",
+                    moTa: "Ứng dụng máy tính ảo sử dụng React Hooks (useState)"
+                }
+            ];
+
+            return (
+                <div style={{ backgroundColor: mauNen, minHeight: "100vh", padding: "10px" }}>
+                    <div className="container">
+                        {/* Gọi Component 1: Header */}
+                        <Header hoTen="Hoàng Trung Dũng" />
+
+                        {/* Gọi Component 2: Section (Thông tin cá nhân dùng children) */}
+                        <Section title="Thông tin cá nhân">
+                            <p><strong>Ngày sinh:</strong> 06/02/2007</p>
+                            <p><strong>Ngành học:</strong> AIoT - Học viện Công nghệ Bưu chính Viễn thông</p>
+                            <p><strong>Sở thích:</strong> Lập trình, chơi game</p>
+                            <p>
+                                <a href="https://ptit.edu.vn/" target="_blank" rel="noreferrer">
+                                    Website Học viện Công nghệ Bưu chính Viễn thông
+                                </a>
+                            </p>
+                        </Section>
+
+                        {/* Gọi Component 2 kết hợp Component 3: Kỹ năng */}
+                        <Section title="Kỹ năng chuyên môn">
+                            <SkillList skills={danhSachKyNang} />
+                        </Section>
+
+                        {/* Gọi Component 2 kết hợp Component 4: Dự án */}
+                        <Section title="Dự án học tập">
+                            <ProjectList projects={danhSachDuAn} />
+                        </Section>
+
+                        {/* Section Liên hệ */}
+                        <Section title="Liên hệ">
+                            <p><strong>Email:</strong> hoangtrungdung@06022007@gmail.com</p>
+                            <p><strong>Điện thoại:</strong> 0374315918</p>
+                        </Section>
+
+                        {/* Nút bấm đổi màu sử dụng React State */}
+                        <button className="btn-doi-mau" onClick={handleDoiMau}>
+                            Đổi màu nền (Hiện tại: {mauNen})
+                        </button>
+
+                        <footer>
+                            <p>© 2026 - Bài tập 2: Trang CV bằng React</p>
+                        </footer>
+                    </div>
+                </div>
+            );
+        }
+
+        // Render ứng dụng vào thẻ div root
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
+    </script>
+</body>
+</html>

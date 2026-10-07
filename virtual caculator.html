@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtual Calculator</title>
+
+  <!-- React 18, ReactDOM & Babel -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f0f0f0;
+      font-family: sans-serif;
+    }
+    .calculator {
+      width: 280px;
+    }
+    .display {
+      background: #ccc;
+      height: 90px;
+      padding: 10px;
+      font-size: 22px;
+      font-family: monospace;
+      text-align: right;
+      border: 1px solid #333;
+      border-bottom: none;
+      word-break: break-all;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid #222;
+      border-left: 1px solid #222;
+    }
+    .btn {
+      height: 46px;
+      border: none;
+      border-right: 1px solid #222;
+      border-bottom: 1px solid #222;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function Display({ value }) {
+      return <div className="display">{value || '0'}</div>;
+    }
+
+    // 2. Component Button nhận props: label, color, onClick
+    function Button({ label, color, onClick }) {
+      return (
+        <button
+          className="btn"
+          style={{ backgroundColor: color || '#4CAF50' }}
+          onClick={() => onClick(label)}
+        >
+          {label}
+        </button>
+      );
+    }
+
+    function App() {
+      const [expression, setExpression] = useState('');
+
+      const handleClick = (btn) => {
+        if (btn === 'Clear') return setExpression('');
+        if (btn === 'Delete') return setExpression(expression.slice(0, -1));
+        if (btn === '=') {
+          try {
+            setExpression(String(eval(expression)));
+          } catch {
+            setExpression('Error');
+          }
+          return;
+        }
+        setExpression(expression === 'Error' ? btn : expression + btn);
+      };
+
+      const buttons = [
+        'Clear', 'Delete', '.', '/',
+        '7', '8', '9', '*',
+        '4', '5', '6', '-',
+        '1', '2', '3', '+'
+      ];
+
+      return (
+        <div className="calculator">
+          {/* Màn hình hiển thị */}
+          <Display value={expression} />
+
+          {/* 4 hàng phím trên render tự động bằng map */}
+          <div className="grid">
+            {buttons.map(item => (
+              <Button key={item} label={item} color="#4CAF50" onClick={handleClick} />
+            ))}
+          </div>
+
+          {/* Hàng cuối: 2 phím 0 và = thụt vào giữa */}
+          <div className="grid" style={{ borderLeft: 'none' }}>
+            <div style={{ visibility: 'hidden' }}></div>
+            <Button label="0" color="#4CAF50" onClick={handleClick} />
+            <Button label="=" color="#4CAF50" onClick={handleClick} />
+            <div style={{ visibility: 'hidden' }}></div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
